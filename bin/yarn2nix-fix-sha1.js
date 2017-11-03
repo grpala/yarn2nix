@@ -35,6 +35,8 @@ function getSha1(url) {
 };
 
 function updateResolvedSha1(pkg) {
+  // local dependency
+  if (!pkg.resolved) { return Promise.resolve(); }
   let [url, sha1] = pkg.resolved.split("#", 2)
   if (!sha1) {
     return new Promise((resolve, reject) => {
@@ -67,6 +69,6 @@ let json = lockfile.parse(file)
 var pkgs = values(json.object);
 
 Promise.all(pkgs.map(updateResolvedSha1)).then(() => {
-  let fileAgain = lockfile.stringify(json);
+  let fileAgain = lockfile.stringify(json.object);
   console.log(fileAgain);
 })
