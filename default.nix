@@ -178,9 +178,13 @@ in rec {
     });
 
   yarn2nix = mkYarnPackage {
-    src = ./.;
+    src = pkgs.lib.cleanSource ./.;
     # yarn2nix is the only package that requires the yarnNix option.
     # All the other projects can auto-generate that file.
     yarnNix = ./yarn.nix;
+    postInstall = ''
+      substituteInPlace "$out/bin/yarn2nix" \
+          --subst-var-by NIX_PREFETCH_GIT "${pkgs.nix-prefetch-git}"
+    '';
   };
 }
